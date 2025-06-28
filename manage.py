@@ -9,6 +9,10 @@ import threading
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+        # Kiểm tra xem lệnh trong sys.argv là gì
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'runserver':
+            threading.Thread(target=run_bot).start()
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -21,5 +25,4 @@ def main():
 
 
 if __name__ == '__main__':
-    threading.Thread(target=run_bot).start()
     main()
