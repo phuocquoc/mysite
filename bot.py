@@ -12,26 +12,34 @@ import requests
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from telegram.error import Conflict
 import pytz
+from flask import Flask
+import os
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-# app = Flask(__name__)
-# @app.route('/')
-# def home():
-#     return "✅ Bot is alive"
+app = Flask(__name__)
 
-# def run_flask():
-#     app.run(host='0.0.0.0', port=8080)
 
-# 👉 Đây là bot Telegram thật
-# def start(update, context):
-#     update.message.reply_text("Chào bạn! Dùng /add <tên> <ngày> nhé.")
+@app.route('/')
+def index():
+    # Gửi thông báo rằng bot đang hoạt động
+    return "Bot is running!"
+
+
+def run():
+    # Chạy ứng dụng Flask trên cổng 8080
+    app.run(host='0.0.0.0', port=8080)
+
 
 def start(update, context):
-    update.message.reply_text("👋 Dùng /add <tên> <ngày>, /list, /add_list, /delete <tên>, /delete_id, /delete_all để quản lý thẻ.")
+    update.message.reply_text(
+        "👋 Dùng /add <tên> <ngày>, /list, /add_list, /delete <tên>, /delete_id, /delete_all để quản lý thẻ."
+    )
+
 
 def add(update, context):
     args = context.args
@@ -43,9 +51,11 @@ def add(update, context):
         due_day = int(args[1])
         chat_id = str(update.message.chat_id)
         add_card(name, due_day, chat_id)
-        update.message.reply_text(f"✅ Đã thêm thẻ {name}, đến hạn ngày {due_day}")
+        update.message.reply_text(
+            f"✅ Đã thêm thẻ {name}, đến hạn ngày {due_day}")
     except:
         update.message.reply_text("⚠️ Lỗi định dạng. Dùng: /add <tên> <ngày>")
+
 
 def list_cards(update, context):
     chat_id = str(update.message.chat_id)
@@ -64,6 +74,7 @@ def list_cards(update, context):
             msg += f"• {name} – ngày {due_day} ({status})\n"
         update.message.reply_text(msg)
 
+
 def delete(update, context):
     args = context.args
     if not args:
@@ -74,14 +85,19 @@ def delete(update, context):
     delete_card(name, chat_id)
     update.message.reply_text(f"🗑️ Đã xoá thẻ {name}")
 
+
 def button(update, context):
     query = update.callback_query
     query.answer()
     data = query.data
     if data.startswith("paid:"):
-        card_id = int(data.split(":")[1])
+        card_id = data.split(":")[1]
+        print("Data", data)
+        print("Card", card_id)
         update_card_paid(card_id)
-        query.edit_message_text("✅ Đã ghi nhận bạn đã thanh toán thẻ tháng này!")
+        query.edit_message_text(
+            "✅ Đã ghi nhận bạn đã thanh toán thẻ tháng này!")
+
 
 def add_list(update, context):
     chat_id = str(update.message.chat_id)
@@ -100,10 +116,12 @@ def add_list(update, context):
 
     update.message.reply_text(f"✅ Đã thêm {success} thẻ. ⚠️ Lỗi {fail} dòng.")
 
+
 def delete_id(update, context):
     chat_id = str(update.message.chat_id)
     delete_all_cards(chat_id)
     update.message.reply_text("🗑️ Đã xoá toàn bộ thẻ của bạn.")
+
 
 def delete_all(update, context):
     admin_id = str(update.message.chat_id)
@@ -115,6 +133,7 @@ def delete_all(update, context):
     delete_everything()
     update.message.reply_text("💥 Đã xoá toàn bộ dữ liệu (mọi người).")
 
+
 def get_chat_id(update, context):
 
     chat = update.effective_chat
@@ -123,18 +142,16 @@ def get_chat_id(update, context):
     chat_id = chat.id
     print("Chat Id", chat_id)
 
-    msg = (
-        f"📌 Thông tin chat:\n"
-        f"• Type: {chat_type}\n"
-        f"• Title/Name: {chat_title}\n"
-        f"• Chat ID: `{chat_id}`"
-    )
+    msg = (f"📌 Thông tin chat:\n"
+           f"• Type: {chat_type}\n"
+           f"• Title/Name: {chat_title}\n"
+           f"• Chat ID: `{chat_id}`")
     update.message.reply_text(msg, parse_mode='Markdown')
-
 
 
 def run_bot():
     init_db()
+
     def start_bot():
         updater = Updater(TELEGRAM_TOKEN, use_context=True)
         dp = updater.dispatcher
@@ -159,7 +176,9 @@ def run_bot():
         if "Conflict" in str(e):
             print("⚠️ Conflict phát hiện – gọi deleteWebhook và thử lại...")
             try:
-                r = requests.get(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/deleteWebhook")
+                r = requests.get(
+                    f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/deleteWebhook"
+                )
                 if r.status_code == 200:
                     print("✅ Đã xoá webhook. Đợi 3s rồi retry...")
                     time.sleep(3)
@@ -169,7 +188,6 @@ def run_bot():
             except Exception as ex:
                 print("❌ Lỗi khi gọi deleteWebhook:", ex)
 
-if __name__ == "__main__":
-    # threading.Thread(target=run_flask).start()
 
+if __name__ == "__main__":
     run_bot()
