@@ -4,7 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'your_secret_key_here'
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 DATABASES = {
