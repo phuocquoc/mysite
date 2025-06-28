@@ -1,0 +1,55 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+.pythonlibs/
+
+# Poetry
+poetry.lock
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# IDEs / Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Replit specific
+.replit
+*.replit
+*.db
+
+# dotenv
+.env
+.env.*
+
+# Misc
+*.sqlite3
+*.pid
+*.bak
+*.swp
