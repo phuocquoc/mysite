@@ -17,16 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.http import HttpResponse
+from bot import run_bot
+import threading 
 
 def home(request):
-    from bot import run_bot
-    import threading 
 
-    threading.Thread(target=run_bot).start()
+    
 
     return HttpResponse("<h1>Chào mừng bạn đến với trang web của tôi!</h1>")
 
+def admin_urls():
+    threading.Thread(target=run_bot).start()
+    return admin.site.urls
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', home),
+    path('admin/', admin_urls()),
 ]
