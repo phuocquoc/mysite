@@ -28,6 +28,6 @@ def admin_urls():
     return admin.site.urls
 
 urlpatterns = [
-    path('admin/', admin_urls),
+    path('admin/', admin_urls()),
     path('', home),
 ]
