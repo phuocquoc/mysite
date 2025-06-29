@@ -23,7 +23,7 @@ def send_reminder():
             due_day = card['due_day']
             chat_id = int(card['chat_id'])
             msg = (
-                f"🔔 Nhắc thanh toán (còn 1 ngày)\n"
+                f"🔔 Nhắc thanh toán (còn {now_vn-due_day+1} ngày)\n"
                 f"💳 Thẻ: {name}\n"
                 f"📅 Đến hạn: ngày {due_day} tháng này\n"
                 f"⏳ Nhớ thanh toán đúng hạn nha!"
