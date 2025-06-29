@@ -21,9 +21,6 @@ from bot import run_bot
 import threading 
 
 def home(request):
-
-    
-
     return HttpResponse("<h1>Chào mừng bạn đến với trang web của tôi!</h1>")
 
 def admin_urls():
@@ -31,5 +28,6 @@ def admin_urls():
     return admin.site.urls
 
 urlpatterns = [
-    path('admin/', admin_urls()),
+    path('admin/', admin_urls),
+    path('', home),
 ]
