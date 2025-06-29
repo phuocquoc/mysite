@@ -173,21 +173,22 @@ def run_bot():
     try:
         start_bot()
     except Exception as e:
-        print("⚠️ Bot lỗi:", e)
+        # print("⚠️ Bot lỗi:", e)
         if "Conflict" in str(e):
-            print("⚠️ Conflict phát hiện – gọi deleteWebhook và thử lại...")
+            # print("⚠️ Conflict phát hiện – gọi deleteWebhook và thử lại...")
             try:
                 r = requests.get(
                     f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/deleteWebhook"
                 )
                 if r.status_code == 200:
-                    print("✅ Đã xoá webhook. Đợi 3s rồi retry...")
+                    # print("✅ Đã xoá webhook. Đợi 3s rồi retry...")
                     time.sleep(3)
                     start_bot()
-                else:
-                    print("❌ deleteWebhook thất bại:", r.text)
+                # else:
+                    # print("❌ deleteWebhook thất bại:", r.text)
             except Exception as ex:
-                print("❌ Lỗi khi gọi deleteWebhook:", ex)
+                pass
+                # print("❌ Lỗi khi gọi deleteWebhook:", ex)
 
 
 if __name__ == "__main__":
