@@ -19,12 +19,11 @@ from django.urls import path
 from django.http import HttpResponse
 
 def home(request):
-    # from bot import run_bot
-    # import threading 
-
-    # threading.Thread(target=run_bot).start()
     from bot import run_bot
-    run_bot()
+    import threading 
+
+    threading.Thread(target=run_bot).start()
+
     return HttpResponse("<h1>Chào mừng bạn đến với trang web của tôi!</h1>")
 
 urlpatterns = [
