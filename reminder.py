@@ -1,6 +1,7 @@
 import os
 import pytz
 from datetime import datetime
+import ast
 import requests
 from telegram import Bot, InlineKeyboardMarkup, InlineKeyboardButton
 from database import get_all_cards_for_reminder
@@ -11,11 +12,13 @@ load_dotenv()
 def send_reminder():
     print("📨 Đang gửi reminder...")
     TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-    REMIND_HOURS = os.getenv("REMIND_HOURS") or [14]
+    REMIND_HOURS = os.getenv("REMIND_HOURS")
+    REMIND_HOURS_list = ast.literal_eval(REMIND_HOURS)
     vietnam_tz = pytz.timezone('Asia/Ho_Chi_Minh')
     now_vn = datetime.now(vietnam_tz)
     hour = now_vn.hour
-    if hour in REMIND_HOURS:
+    date = now_vn.date
+    if int(hour) in REMIND_HOURS_list:
         bot = Bot(token=TELEGRAM_TOKEN)
         for card in get_all_cards_for_reminder():
             card_id = card['_id']
@@ -23,7 +26,7 @@ def send_reminder():
             due_day = card['due_day']
             chat_id = int(card['chat_id'])
             msg = (
-                f"🔔 Nhắc thanh toán (còn {now_vn-due_day+1} ngày)\n"
+                f"🔔 Nhắc thanh toán (còn {date-due_day+1} ngày)\n"
                 f"💳 Thẻ: {name}\n"
                 f"📅 Đến hạn: ngày {due_day} tháng này\n"
                 f"⏳ Nhớ thanh toán đúng hạn nha!"
