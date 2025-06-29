@@ -23,7 +23,6 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 app = Flask(__name__)
 
-RUN = 0
 
 
 @app.route('/')
@@ -172,9 +171,7 @@ def run_bot():
         updater.idle()
 
     try:
-        if not RUN:
-            start_bot()
-            RUN=1
+        start_bot()
     except Exception as e:
         print("⚠️ Bot lỗi:", e)
         if "Conflict" in str(e):

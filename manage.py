@@ -2,7 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from bot import run_bot
 import threading 
 
 
@@ -22,5 +21,4 @@ def main():
 
 
 if __name__ == '__main__':
-    run_bot()
     main()
