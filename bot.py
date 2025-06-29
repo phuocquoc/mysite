@@ -14,6 +14,8 @@ from telegram.error import Conflict
 import pytz
 from flask import Flask
 import os
+from django.core.cache import cache
+
 
 from dotenv import load_dotenv
 
@@ -21,19 +23,19 @@ load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
 
 
-@app.route('/')
-def index():
-    # Gửi thông báo rằng bot đang hoạt động
-    return "Bot is running!"
+# @app.route('/')
+# def index():
+#     # Gửi thông báo rằng bot đang hoạt động
+#     return "Bot is running!"
 
 
-def run():
-    # Chạy ứng dụng Flask trên cổng 8080
-    app.run(host='0.0.0.0', port=8080)
+# def run():
+#     # Chạy ứng dụng Flask trên cổng 8080
+#     app.run(host='0.0.0.0', port=8080)
 
 
 def start(update, context):
@@ -171,24 +173,30 @@ def run_bot():
         updater.idle()
 
     try:
-        start_bot()
+        if cache.get("bot_running"):
+            start_bot()
+            cache.set("bot_running", True)
     except Exception as e:
         # print("⚠️ Bot lỗi:", e)
         if "Conflict" in str(e):
+            if cache.get("bot_running"):
+                cache.set("bot_running", True)
+            else:
+                cache.set("bot_running", False)
             # print("⚠️ Conflict phát hiện – gọi deleteWebhook và thử lại...")
-            try:
-                r = requests.get(
-                    f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/deleteWebhook"
-                )
-                if r.status_code == 200:
-                    # print("✅ Đã xoá webhook. Đợi 3s rồi retry...")
-                    time.sleep(3)
-                    start_bot()
-                # else:
-                    # print("❌ deleteWebhook thất bại:", r.text)
-            except Exception as ex:
-                pass
-                # print("❌ Lỗi khi gọi deleteWebhook:", ex)
+                try:
+                    r = requests.get(
+                        f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/deleteWebhook"
+                    )
+                    if r.status_code == 200:
+                        # print("✅ Đã xoá webhook. Đợi 3s rồi retry...")
+                        time.sleep(3)
+                        start_bot()
+                    # else:
+                        # print("❌ deleteWebhook thất bại:", r.text)
+                except Exception as ex:
+                    pass
+                    # print("❌ Lỗi khi gọi deleteWebhook:", ex)
 
 
 if __name__ == "__main__":
