@@ -1,35 +1,11 @@
 services:
-  - type: worker
-    name: telegram-bot
+  - type: web
+    name: my-django-app
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python3 bot.py"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn mysite.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
-      - key: TELEGRAM_TOKEN
-        sync: false
-      - key: DATABASE_URL
-        sync: false
-
-  - type: cron
-    name: reminder-9am
-    env: python
-    schedule: "0 2 * * *"  # 9h sáng VN = 2h UTC
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python3 reminder.py"
-    envVars:
-      - key: TELEGRAM_TOKEN
-        sync: false
-      - key: DATABASE_URL
-        sync: false
-
-  - type: cron
-    name: reminder-4pm
-    env: python
-    schedule: "0 9 * * *"  # 16h chiều VN = 9h UTC
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python3 reminder.py"
-    envVars:
-      - key: TELEGRAM_TOKEN
-        sync: false
-      - key: DATABASE_URL
-        sync: false
+      - key: DJANGO_SETTINGS_MODULE
+        value: mysite.settings
+      - key: PORT
+        value: 8000
