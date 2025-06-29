@@ -173,11 +173,11 @@ def run_bot():
         updater.idle()
 
     try:
-        if cache.get("bot_running"):
+        if not cache.get("bot_running"):
             start_bot()
             cache.set("bot_running", True)
     except Exception as e:
-        # print("⚠️ Bot lỗi:", e)
+        print("⚠️ Bot lỗi:", e)
         if "Conflict" in str(e):
             if cache.get("bot_running"):
                 cache.set("bot_running", True)
